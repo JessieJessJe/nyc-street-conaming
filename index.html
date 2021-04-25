@@ -1,0 +1,354 @@
+<html>
+	<head>
+		<title>NYC Street Co-naming</title>
+        <link rel="stylesheet" href="https://use.typekit.net/rvw1eqo.css">
+        <link rel="stylesheet" href="./style.css">
+        
+	</head>
+	<body>
+        <div id="header"></div>
+        <div id="info">
+            <h1 id="infotitle">NYC Street Co-Naming</h1>
+            <h2 style="padding-top:2rem">click on the dots to explore more >></h2>
+        </div>
+        <div id="container">
+        <canvas id="c"></canvas>
+        </div>
+
+		<script src="js/three.js"></script>
+		<script src="js/OrbitControls.js"></script>
+        <script type = "module" src="js/TextureLoader.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script>
+
+        var data;
+        var scene, renderer, camera, controls,loader, canvas;
+        var material;
+        var geonyc, geomap, nodes;
+
+        var groupColor ={
+            "-1":0xcccccc,
+            "1":0xffcf0a,
+            "2":0x00bd7e,
+            "3":0xb20061,
+            "4":0x8e5bc7};
+        
+$.getJSON( "nyc.json", function( geo ) {
+    geonyc = geo;
+
+        function normLat(lat){
+
+            const min = 40.5409949
+            const max = 40.86892
+
+            var norm = ((lat-min) / (max - min) * 50 - 25)*3
+        return norm
+        }
+
+        function normLong(long){
+
+            const min = -73.72609609999999
+            const max = -74.2297827
+
+            var norm = ((long-min) / (max - min) * 50 - 25)*3
+            return norm
+        }
+
+
+        // Converts a GeoJSON MultiLineString [in spherical coordinates] to a THREE.LineSegments.
+        function wireframe(multilinestring, material) {
+ 
+        // console.log(multilinestring);
+        var linelist = []
+        var geometry = new THREE.BufferGeometry();
+            i = 0;
+        // for (let i=0; i<multilinestring.length; i++){   
+            for (key in multilinestring[0]){  
+                i += 1;
+             
+                var px = normLong(multilinestring[0][key][0])
+                var py = normLat(multilinestring[0][key][1])
+                // var px2 = normLong(multilinestring[key][1][0])
+                // var py2 = normLat(multilinestring[key][1][1])
+
+                linelist.push(new THREE.Vector3(px, py, 1)) 
+                // linelist.push(new THREE.Vector3(px2, py2, 10 )) 
+    
+        }
+        // console.log(multilinestring.length)
+            geometry.setFromPoints( linelist );
+            var mapMesh = new THREE.Line(geometry,material)         
+            geomap.add(mapMesh);
+        }
+
+        $.getJSON( "my2020v2.json", function( data ) {
+                
+            console.log(data[1]) 
+            init()
+
+            function init(){
+
+                //basic set up---------------------------------
+                canvas = document.querySelector('#c');
+
+                scene = new THREE.Scene();
+                scene.background = new THREE.Color(0x000000);
+
+			    camera = new THREE.PerspectiveCamera( 80, canvas.clientWidth / canvas.clientHeight, 1, 500 );
+                
+                camera.position.x = 100;
+                camera.position.y = 30;
+                camera.position.z = 100;
+         
+
+                renderer = new THREE.WebGLRenderer({canvas});
+			    renderer.setSize(canvas.clientWidth,canvas.clientHeight);
+
+                controls = new THREE.OrbitControls( camera, renderer.domElement );
+                    controls.rotateSpeed = 0.4;
+                    controls.enableDamping = true;
+                    controls.dampingFactor = .25;
+                    controls.minDistance = 1;
+                    controls.maxDistance = 100;
+                
+                const light = new THREE.AmbientLight( 0x404040, 6); // soft white light
+                scene.add( light );
+
+                //add nyc GEOJSON map -----------------------
+                geomap = new THREE.Group();
+
+                var mapM = new THREE.LineBasicMaterial({color: 0xd3d3d3,linewidth:1})
+                
+                for (key in geonyc.features){
+                    geonyc.features[key].geometry.coordinates.forEach( function(shape){
+
+                        wireframe(shape, mapM)
+                     
+                    })
+
+                }
+                geomap.rotation.y = Math.PI
+                scene.add(geomap);
+                //----------------------------------------------
+                
+
+                
+                // check when the browser size has changed and adjust the camera accordingly
+                window.addEventListener( 'resize', function( )
+                {
+                    var WIDTH = canvas.clientWidth;
+                    var HEIGHT = canvas.clientHeight;
+                    renderer.setSize( WIDTH, HEIGHT );
+                    camera.aspect = WIDTH / HEIGHT;
+                    camera.updateProjectionMatrix( );
+                } );
+                
+                // render on demand section ----------------------
+                // function requestRenderIfNotRequested() {
+                //     if (!renderRequested) {
+                //     renderRequested = true;
+                //     requestAnimationFrame(render);
+                //     }
+                // }
+
+                // function resizeRendererToDisplaySize(renderer) {
+                //     var WIDTH = canvas.clientWidth;
+                //     var HEIGHT = canvas.clientHeight;
+                //     renderer.setSize( WIDTH, HEIGHT );
+                //     camera.aspect = WIDTH / HEIGHT;
+                //     camera.updateProjectionMatrix( );
+                // }
+
+                // let renderRequested = false;
+
+                // function render() {
+                //     renderRequested = false;
+
+                //     resizeRendererToDisplaySize(renderer);
+                // }
+                    
+                // render();
+                // controls.addEventListener('change', requestRenderIfNotRequested);
+                // window.addEventListener('resize', requestRenderIfNotRequested);
+
+                 // render on demand section end----------------------
+             
+
+                nodes = new THREE.Group()
+                nodes.name = "nodes"
+                newNodes();
+                scene.add(nodes);
+                
+                update();
+                
+                window.addEventListener( 'mousemove', onMouseMove, false );
+                document.getElementById("container").addEventListener( 'click', onClick, false );
+
+            }
+            			
+		function update( )
+			{
+				requestAnimationFrame( update );
+                controls.update(); 
+				renderer.render( scene, camera );
+
+                if (prevball != undefined && rotateball){
+                    prevball.rotation.y += 0.01;
+                }
+			};
+        
+        // onclick event --------------------------------
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        function onMouseMove( event ) {
+            // calculate mouse position in normalized device coordinates
+            // (-1 to +1) for both components
+            mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+            mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+            onHover();
+        }
+
+        function onHover(){
+            raycaster.setFromCamera( mouse, camera );
+            // calculate objects intersecting the picking ray
+            const intersects = raycaster.intersectObjects( [scene.getObjectByName("nodes")], true);
+
+            if (intersects[0] != undefined){
+                $('#container').css('cursor','pointer');
+            }
+            else {
+                $('#container').css('cursor','default');
+            }
+                
+        }
+        var rotateball = true;
+        var prevpoint = undefined;
+
+        function onClick(){
+
+            raycaster.setFromCamera( mouse, camera );
+            // calculate objects intersecting the picking ray
+            const intersects = raycaster.intersectObjects( [scene.getObjectByName("nodes")], true);
+
+            if (intersects[0] != undefined){
+
+                if (prevpoint != undefined){
+                    prevpoint.visible = true;
+                }
+                intersects[0].object.visible = false;
+                prevpoint = intersects[0].object;             
+                returnClick(intersects[0].object.name)
+               
+            } else { rotateball = !rotateball }
+        }    
+
+        
+        var prevball = undefined;
+        var prevlightball = undefined;
+        var lightball;
+
+        function returnClick(id){
+
+            $.each(data, function(i, v) {
+                if (v.id == id) {
+              
+                    $('#info').fadeOut(300, function() {$(this).html(`<h1 id="infotitle">${v.coname}</h1><h2>${v.location}</h2><p>${v.year}</p><p id="infopara">${v.reason}</p>`).show()});
+                 
+                    if ($('#header').is(':empty')){$('#header').append(' <h1 id="headertitle">NYC Street Co-Naming</h1>').fadeIn('slow');}
+                    
+                    
+                    //add marker effect
+                    var pY = (v.nlat-25)*3,
+                        pX = (v.nlong-25)*3,
+                        pZ = (v.group +2) * 2,
+                        pColor = groupColor[v.group];
+
+                    var nodeG = new THREE.ConeGeometry(1,2,6);
+                    var nodeM = new THREE.MeshPhongMaterial( { color: pColor, opacity:0.8}); //{ color: 0xffffff, wireframe: true } 
+                    var node2 = new THREE.Mesh( nodeG, nodeM);
+                    node2.position.set(pX,pY,pZ);
+                    node2.rotation.x = - Math.PI /2 ;
+                             
+                    const boxG = new THREE.ConeGeometry( 4, 8, 6 );
+                    const edges = new THREE.EdgesGeometry( boxG);
+                    const lb = new THREE.LineSegments( edges,new THREE.LineDashedMaterial( { color: 0xffffff, dashSize: 1, gapSize: 1 } ) );
+                    lb.computeLineDistances();
+
+                    node2.add(lb);
+
+                    scene.add( node2 );
+
+                    if (prevball != undefined){
+                        scene.remove(prevball)
+                        rotateball = true;
+                    } 
+                    prevball = node2;
+
+                    return;
+                }   
+            });
+        }
+
+        //add nodes to the scene
+        function newNodes(){
+            var sizes = [],
+                colors = []
+                positions = [];
+
+            for (key in data){
+             
+                var pY = (data[key].nlat-25)*3,
+                    pX = (data[key].nlong-25)*3,
+                    pZ = (data[key].group +2) * 2,
+                    pColor = groupColor[data[key].group];
+
+                   
+
+                var nodeG = new THREE.BoxGeometry(1,1,1);
+                var nodeM = new THREE.MeshBasicMaterial( {color: new THREE.Color(pColor)}); //{ color: 0xffffff, wireframe: true } 
+                let node = new THREE.Mesh( nodeG, nodeM);
+                node.position.set(pX,pY,pZ);
+                // node.rotation.x = Math.PI / 2;
+                node.name = data[key].id;
+                node.coname = data[key].coname;
+                nodes.add( node );
+
+
+                var dot = new THREE.Vector3(pX,pY,pZ);
+
+                //adding line -----------------------
+                const lineM = new THREE.LineDashedMaterial({
+                        color: 0xefefef,
+                        opacity: 0.5,
+                        transparent: true,
+                        linewidth: 1,
+                        scale: 2,
+                        dashSize: 0.5,
+                        gapSize: 0.5
+                    });
+
+                    const points = [];
+                    points.push( new THREE.Vector3( pX,pY,pZ ) );
+                    points.push( new THREE.Vector3( pX,pY,0 ) );
+                 
+                    const lineG = new THREE.BufferGeometry().setFromPoints( points );
+
+                    const line = new THREE.Line( lineG, lineM );
+                    line.computeLineDistances();
+
+                    scene.add( line );
+                //end line -------------------
+
+            }
+
+        }
+			
+        });
+        
+    });//end of jQuery GEO JSON
+		</script>
+
+ 
+	</body>
+</html>

@@ -1,0 +1,84 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+
+    font-family: degular,sans-serif;
+    font-weight: 200;
+    font-style: normal;
+  }
+
+#infotitle {
+    text-transform: uppercase;
+    font-family: minion-pro-display, serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 3.5rem;
+    margin: 0;
+    padding: 0;
+    line-height:100%
+  }
+/* 
+h1{
+  
+} */
+
+h2{
+  font-size: 1.5rem;
+  font-family: neue-haas-grotesk,sans-serif;
+  font-weight: 200;
+  font-style: normal;
+  margin: 0;
+  /* font-family: degular-display,sans-serif;
+  font-weight: 300;
+  font-style: normal; */
+}
+
+#infopara{
+  width: 60%;
+  font-size: 1.5rem;
+}
+
+#c {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  #container {
+    position: relative;  /* makes this the origin of its children */
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    /* z-index: 20; */
+  }
+  
+  
+  #info {
+    position: absolute;  /* let us position ourself inside the container */
+    left: 1%;             /* make our position the top left of the container */
+    top: 20%;
+    color: white;
+    /* display: none; */
+    width: 40%; 
+    height: 60%;
+    overflow-y: scroll;
+    z-index: 1;
+  }
+
+  #header{
+    font-weight: 200;
+    position: absolute; 
+    left: 1%; 
+    top:5%;
+    color:white;
+    z-index: 1;         
+  }
+
+  #headertitle{
+    font-family: minion-pro-display, serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 1.5rem;
+
+  }
