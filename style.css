@@ -72,17 +72,18 @@ a{
     left: 1%;             /* make our position the top left of the container */
     top: 20%;
     color: white;
-    /* display: none; */
     width: 40%; 
     height: auto;
     overflow-y: scroll;
     z-index: 1;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
   }
 
   #info2{
     position:absolute;
-    left: 1%;             
-    /* follow info */
+    left: 1%;
+
     color: white;
     width:auto;
     height:auto;
@@ -90,7 +91,20 @@ a{
     max-height: 60%;
     overflow-y: scroll;
     z-index: 1;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 
+  }
+
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  #info::-webkit-scrollbar {
+  display: none;
+}
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  #info2::-webkit-scrollbar {
+    display: none;
   }
 
   .infopara{
