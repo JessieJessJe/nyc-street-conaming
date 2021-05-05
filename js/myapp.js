@@ -4,6 +4,7 @@ import { TrackballControls } from './TrackballControls.js';
         var scene, renderer, camera, controls,loader, canvas;
         var angle = 0; 
         var geonyc, geomap, nodes;
+        var everything;
 
 
 const termlist = [['detective','nypd','9/11','police','recovery','september 11, 2001'],
@@ -54,12 +55,14 @@ const termlist = [['detective','nypd','9/11','police','recovery','september 11, 
             var norm = (year - 2000 + 3)* 1.5
             return norm
             }
-
+            
+               
 
 
 $.getJSON( "nyc.json", function( geo ) {
     geonyc = geo;
 
+    everything = new THREE.Group();
 
         // Converts a GeoJSON MultiLineString [in spherical coordinates] to a THREE.LineSegments.
         function wireframe(multilinestring, material) {
@@ -149,7 +152,11 @@ $.getJSON( "nyc.json", function( geo ) {
 
                 }
                 geomap.rotation.y = Math.PI
-                scene.add(geomap);
+                everything.add(geomap)
+
+                scene.add(everything);
+
+                // scene.add(geomap);
                 //----------------------------------------------
                 
 
@@ -170,7 +177,8 @@ $.getJSON( "nyc.json", function( geo ) {
                 nodes = new THREE.Group()
                 nodes.name = "nodes"
                 newNodes();
-                scene.add(nodes);
+                everything.add(nodes);
+                // scene.add(nodes);
                 
                 update();
                 
@@ -181,7 +189,9 @@ $.getJSON( "nyc.json", function( geo ) {
           			
 		function update( )
 			{
-				requestAnimationFrame( update );
+				var radius = 0.1; 
+
+                requestAnimationFrame( update );
                 controls.update(); 
 				renderer.render( scene, camera );
 
@@ -190,9 +200,10 @@ $.getJSON( "nyc.json", function( geo ) {
                 }
 
                 if (prevball == undefined){
-                    camera.position.x = radius * Math.cos( angle );  
-                    camera.position.z = radius * Math.sin( angle );
-                    angle += 0.01;      
+                    everything.rotation.x = radius - angle;  
+                    //everything.rotation.x = radius * Math.cos( angle );  
+            
+                    angle += 0.001;      
                 }
 			};
         
@@ -287,7 +298,8 @@ $.getJSON( "nyc.json", function( geo ) {
 
                     node2.add(lb);
 
-                    scene.add( node2 );
+                    everything.add(node2);
+                    // scene.add( node2 );
 
                     if (prevball != undefined){
                         scene.remove(prevball)
@@ -344,7 +356,8 @@ $.getJSON( "nyc.json", function( geo ) {
                     const line = new THREE.Line( lineG, lineM );
                     line.computeLineDistances();
 
-                    scene.add( line );
+                    everything.add(line)
+                    // scene.add( line );
                 //end line -------------------
 
             }
@@ -354,7 +367,6 @@ $.getJSON( "nyc.json", function( geo ) {
         });
         
     });//end of jQuery GEO JSON
-
 
     function highlightWord(k,g){
         var color = groupColor[g].toString(16);
