@@ -6,22 +6,64 @@
         
 	</head>
 	<body>
-        <div id="header"></div>
-        <div id="hint">      
-            <p>ROTATE<br>mouse click left and move <br>ZOOM<br>mouse scroll<br>PAN<br>mouse click right and move</p>
-            <a id="reset" href="" onclick="controlsReset()" >reset view</a>
+
+        <!-- create a full-screen landing page -->
+        <!-- <header id="showcase">
+            <h1>Welcome To The Beach</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Modi officiis ipsum officia numquam expedita ullam.</p>
+            <a id="launchButton" href="" class="button">Read More</a>
+        </header> -->
+
+        <div id="headerBar">
+            <!-- <div id="header"></div> -->
+
+            <nav>
+                <ul id="headerList">
+                    <li class="headerItem" id="header"></li>
+                    <li class="headerItem tooltip">rotate <span class="tooltiptext">on canvas, mouse press LEFT and move</span></li>
+                    <li class="headerItem tooltip">zoom <span class="tooltiptext">on canvas, mouse scroll / two-finger-scroll for trackpad</span> </li>
+                    <li class="headerItem tooltip">pan <span class="tooltiptext">on canvas, mouse press RIGHT and move</span></li>
+                    <li class="headerItem"><a id="reset" href="" onclick="controlsReset()" style="text-decoration: none">reset view</a></li>
+                    <li class="headerItem"><a href="https://github.com/JessieJessJe/nyc-street-conaming" target="_blank" style="text-decoration: none">about</a></li>
+                </ul>
+
+            </nav>    
+        </div>
+        <div id="hint">    
+
+            <!-- <p>ROTATE<br>mouse click left and move <br>ZOOM<br>mouse scroll<br>PAN<br>mouse click right and move</p> -->
+            <!-- <a id="reset" href="" onclick="controlsReset()">reset view</a>
             <br>
-            <br>
-            <a href="https://docs.google.com/spreadsheets/d/1zEwUpUBt0LlXjKgcgx5sBeSf-bRZcEUzyG6LO0LTt4c/edit?usp=sharing" target="_blank">spreadsheet view</a>
+            <br> -->
+            
         </div>
         <div id="info">
-            <h1 id="infotitle">NYC Street <br>Co-Naming</h1>
-            
-            <h2 style="padding-top:2rem">
+            <h1 id="infotitle">NYC Street Co-Naming</h1>
+                <br>
+                <h2>click on the cubes to explore more >></h2>
+                <p>We are what we remember >> </p>
+                
+                <p class="introText">Street names are how we recognize and navigate the physical spaces. They also manifest the intangibles, the local, historical, cultural, or political legacies of spaces.</p>
+                
+                <p class="introText"><span style="background-color:3440eb">NYC honorary street names</span>, or co-names by the City Council, are one way local activists, communities, and politicians lean on to <i>remap</i> our city in a <i>local</i> sense, interweaving its past, present, and future.</p>
+                
+                <p class="introText">Some of the city’s warmest, happiest, hardest, or darkest past are brought to the present, and displayed at the intersections of urban grids as well as our minds, illuminating us where to go. The namings are not to appear on the city’s official map, nor on your Google map.</p>
+
+                
+                <p class="introText"><span style="background-color:3440eb">This page</span> showcases NYC honorific street names established in 2002, 2011, and 2021, out of the nearly 30 years’ offical NYC Street Co-Naming activities. </p>
+                <p class="introText">Line heights represent years. Cube colors represent themes. You can rotate, zoom, or pan around to gain different perpectives. Click on each cube to get more details. Enjoy exploring!</p>
+
+                Data Source:
                 <a href="https://legistar.council.nyc.gov/LegislationDetail.aspx?ID=438474&GUID=49380206-DC36-4AD6-B2CA-40B24EC12CE2&Options=ID|Text|Attachments|Other|&Search=" target="_blank">2002</a> · 
                 <a href="https://legistar.council.nyc.gov/LegislationDetail.aspx?ID=917834&GUID=A94708AF-7730-440D-A8A8-B350F74EF739&Options=ID|Text|Attachments|Other|&Search=" target="_blank">2011</a> · 
-                <a href="https://legistar.council.nyc.gov/LegislationDetail.aspx?ID=4734370&GUID=26BA0E27-8A2A-41E5-BD41-F8BB3CB8384B&Options=Advanced&Search=" target="_blank">2021</a></h2>
-            <h2 style="padding-top:2rem">click on the cubes to explore more >></h2>
+                <a href="https://legistar.council.nyc.gov/LegislationDetail.aspx?ID=4734370&GUID=26BA0E27-8A2A-41E5-BD41-F8BB3CB8384B&Options=Advanced&Search=" target="_blank">2021</a></h2> · 
+                <a href="https://docs.google.com/spreadsheets/d/1zEwUpUBt0LlXjKgcgx5sBeSf-bRZcEUzyG6LO0LTt4c/edit?usp=sharing" target="_blank">spreadsheet view</a>
+
+                
+           
+            
+            
+           
         </div>
         <div id="info2"></div>
         <div id="container">

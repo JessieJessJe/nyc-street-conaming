@@ -1,28 +1,33 @@
 import { TrackballControls } from './TrackballControls.js';
 
+
         var scene, renderer, camera, controls,loader, canvas;
-        var control;
+        var angle = 0; 
         var geonyc, geomap, nodes;
 
 
-        // "1":0xffcf0a, blue , 0 -- purple
-        //     "2":0x00bd7e, darker green -> pink
-        //     "3":0xb20061, pink same
-        //     "4":0x8e5bc7, 911 light blue
-        //     "5":0x3440eb, yellow
-        //     "6":0xb20061, green
-        //     "7":0x8e5bc7, killed - light blue 64d9d9
-        //     "8":0x3440eb}; orange e67a00
+const termlist = [['detective','nypd','9/11','police','recovery','september 11, 2001'],
+                    ['woman','polish','association','she'],                 
+                    ['staten island','business','career','board','jazz','council','league'],
+                    ['baptist','pastor','church', 'america','rabbi'],
+                    ['911 heroes'],
+                    ['september 11, 2001', 'fdny','firefighter'],
+                    ['gun','marine','9/11', 'combat','violence','police','september 11, 2001'],
+                    ['district','attorney','health',' hiv ',' human rights','hiv/aids'],
+                    ['school',' art ','civic','children','museum','award']]
+
+
+//"0":0x8029a6,  "5":0xffcf0a,  "6":0x2deb36,
 
         const groupColor ={
             "-1":0xcccccc,
-            "0":0x8029a6,
+            "0":0x3440eb,
             "1":0x9ca2ff,
             "2":0xfc53bc,
             "3":0xb20061,
             "4":0x3440eb,
             "5":0xffcf0a, 
-            "6":0x2deb36,
+            "6":0x3440eb,
             "7":0x34ebeb,
             "8":0xe67a00};
         
@@ -31,7 +36,7 @@ import { TrackballControls } from './TrackballControls.js';
             const min = 40.5409949
             const max = 40.86892
 
-            var norm = ((lat-min) / (max - min) * 50 - 25)*3.5
+            var norm = ((lat-min) / (max - min) * 50 -25)*3.5
             return norm
             }
 
@@ -40,7 +45,7 @@ import { TrackballControls } from './TrackballControls.js';
             const min = -73.72609609999999
             const max = -74.2297827
 
-            var norm = ((long-min) / (max - min) * 50 - 35)*3.5
+            var norm = ((long-min) / (max - min) * 50 -25)*3.5
             return norm
             }
         
@@ -49,7 +54,9 @@ import { TrackballControls } from './TrackballControls.js';
             var norm = (year - 2000 + 3)* 1.5
             return norm
             }
-        
+
+
+
 $.getJSON( "nyc.json", function( geo ) {
     geonyc = geo;
 
@@ -83,6 +90,7 @@ $.getJSON( "nyc.json", function( geo ) {
 
             function init(){
 
+                
                 //basic set up---------------------------------
                 canvas = document.querySelector('#c');
 
@@ -92,8 +100,8 @@ $.getJSON( "nyc.json", function( geo ) {
 			    camera = new THREE.PerspectiveCamera( 80, canvas.clientWidth / canvas.clientHeight, 1, 800 );
                 
                 camera.position.x = 0;
-                camera.position.y = -150;
-                camera.position.z = 20;
+                camera.position.y = 0;
+                camera.position.z = 120;
          
 
                 renderer = new THREE.WebGLRenderer({canvas});
@@ -170,7 +178,7 @@ $.getJSON( "nyc.json", function( geo ) {
                 document.getElementById("container").addEventListener( 'click', onClick, false );
 
             }
-            			
+          			
 		function update( )
 			{
 				requestAnimationFrame( update );
@@ -179,6 +187,12 @@ $.getJSON( "nyc.json", function( geo ) {
 
                 if (prevball != undefined && rotateball){
                     prevball.rotation.y += 0.01;
+                }
+
+                if (prevball == undefined){
+                    camera.position.x = radius * Math.cos( angle );  
+                    camera.position.z = radius * Math.sin( angle );
+                    angle += 0.01;      
                 }
 			};
         
@@ -341,15 +355,6 @@ $.getJSON( "nyc.json", function( geo ) {
         
     });//end of jQuery GEO JSON
 
-const termlist = [['detective','nypd','9/11','police','recovery','september 11, 2001'],
-                    ['woman','polish','association','she'],                 
-                    ['staten island','business','career','board','jazz','council','league'],
-                    ['baptist','pastor','church', 'america','rabbi'],
-                    ['911 heroes'],
-                    ['september 11, 2001', 'fdny','firefighter'],
-                    ['gun','marine','9/11', 'combat','violence','police','september 11, 2001'],
-                    ['district','attorney','health',' hiv ',' human rights','hiv/aids'],
-                    ['school',' art ','civic','children','museum','award']]
 
     function highlightWord(k,g){
         var color = groupColor[g].toString(16);
@@ -372,3 +377,6 @@ const termlist = [['detective','nypd','9/11','police','recovery','september 11, 
 
         return k
     }
+
+
+
