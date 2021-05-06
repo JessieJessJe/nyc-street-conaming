@@ -19,4 +19,12 @@ This website showcases NYC honorific street names established in 2002, 2011, and
 
 ## Process
 
+### data collecting
+coming soon...
+
+### theme generation
+![wordcloud2011](https://github.com/JessieJessJe/nyc-street-conaming/blob/main/wordcloud_2011.png)
+![wordcloud2021](https://github.com/JessieJessJe/nyc-street-conaming/blob/main/wordcloud_2021.png)
+
+### web design & dev
 coming soon...
