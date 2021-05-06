@@ -5,6 +5,7 @@ import { TrackballControls } from './TrackballControls.js';
         var angle = 0; 
         var geonyc, geomap, nodes;
         var everything;
+        var spinning = true;
 
 
 const termlist = [['detective','nypd','9/11','police','recovery','september 11, 2001'],
@@ -199,7 +200,7 @@ $.getJSON( "nyc.json", function( geo ) {
                     prevball.rotation.y += 0.01;
                 }
 
-                if (prevball == undefined){
+                if (prevball == undefined && spinning){
                     everything.rotation.x = radius - angle;  
                     //everything.rotation.x = radius * Math.cos( angle );  
             
@@ -250,7 +251,10 @@ $.getJSON( "nyc.json", function( geo ) {
                 prevpoint = intersects[0].object;             
                 returnClick(intersects[0].object.name)
                
-            } else { rotateball = !rotateball }
+            } else { rotateball = !rotateball;
+                     spinning = !spinning }
+
+            
         }    
 
         
