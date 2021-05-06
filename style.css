@@ -154,6 +154,10 @@ a{
       
     }
 
+    .legend{
+      margin: auto 1rem;
+    }
+
     .headerItem:hover{
       cursor: pointer;
     }
@@ -164,7 +168,7 @@ a{
       
       visibility: hidden;
       
-      background-color: rgb(188, 224, 24);
+      background-color: white;
       color: rgb(0, 0, 0);
       text-align: center;
       padding: 5px 1%;

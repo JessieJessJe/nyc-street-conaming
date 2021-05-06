@@ -189,7 +189,7 @@ $.getJSON( "nyc.json", function( geo ) {
           			
 		function update( )
 			{
-				var radius = 0.1; 
+				var radius = 0.001; 
 
                 requestAnimationFrame( update );
                 controls.update(); 
@@ -302,7 +302,7 @@ $.getJSON( "nyc.json", function( geo ) {
                     // scene.add( node2 );
 
                     if (prevball != undefined){
-                        scene.remove(prevball)
+                        everything.remove(prevball)
                         rotateball = true;
                     } 
                     prevball = node2;
@@ -389,6 +389,4 @@ $.getJSON( "nyc.json", function( geo ) {
 
         return k
     }
-
-
 
