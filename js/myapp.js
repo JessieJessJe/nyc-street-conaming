@@ -1,13 +1,13 @@
 import { TrackballControls } from './TrackballControls.js';
 
 
-        var scene, renderer, camera, controls,loader, canvas;
+        var scene, renderer, camera, controls, canvas;
         var angle = 0; 
         var geonyc, geomap, nodes;
         var everything;
         var spinning = true;
 
-
+// list of keywords for each group
 const termlist = [['detective','nypd','9/11','police','recovery','september 11, 2001'],
                     ['woman','polish','association','she'],                 
                     ['staten island','business','career','board','jazz','council','league'],
@@ -57,8 +57,6 @@ const termlist = [['detective','nypd','9/11','police','recovery','september 11, 
             return norm
             }
             
-               
-
 
 $.getJSON( "nyc.json", function( geo ) {
     geonyc = geo;
@@ -71,7 +69,7 @@ $.getJSON( "nyc.json", function( geo ) {
         var linelist = []
         var geometry = new THREE.BufferGeometry();
         var i = 0;
-        // for (let i=0; i<multilinestring.length; i++){   
+  
             for (let key in multilinestring[0]){  
                 i += 1;
              
@@ -157,7 +155,6 @@ $.getJSON( "nyc.json", function( geo ) {
 
                 scene.add(everything);
 
-                // scene.add(geomap);
                 //----------------------------------------------
                 
 
@@ -179,7 +176,6 @@ $.getJSON( "nyc.json", function( geo ) {
                 nodes.name = "nodes"
                 newNodes();
                 everything.add(nodes);
-                // scene.add(nodes);
                 
                 update();
                 
@@ -233,8 +229,13 @@ $.getJSON( "nyc.json", function( geo ) {
             }
                 
         }
+        
+        //toggle the marker's rotating effect
         var rotateball = true;
-        var prevpoint = undefined;
+
+        //once a new marker is made, these two variables help to restore the previous marker back to normal 
+        var prevpoint = undefined; //before - box shape
+        var prevball = undefined; //after - diamond shape 
 
         function onClick(){
 
@@ -252,21 +253,15 @@ $.getJSON( "nyc.json", function( geo ) {
                 returnClick(intersects[0].object.name)
                
             } else { rotateball = !rotateball;
-                     spinning = !spinning }
-
-            
+                     spinning = !spinning }           
         }    
-
-        
-        var prevball = undefined;
-        var prevlightball = undefined;
-        var lightball;
 
         function returnClick(id){
 
             $.each(data, function(i, v) {
                 if (v.id == id) {
-              
+                    
+                    //update detailed information
                     $('#info').fadeOut(300, function() {
                         $(this).html(`<h1 id="infotitle">${v.coname}</h1>`).show()
 
@@ -285,16 +280,16 @@ $.getJSON( "nyc.json", function( geo ) {
                     var pX = - normLong(v.long),
                         pY = normLat(v.lat),
                         pZ = normZ(v.year),
-                        pColor = groupColor[v.group];
-                    
-                    //pZ = (v.group +2) * 2, highest by group
-
+                        pColor = groupColor[v.group];   
+               
+                    //the diamond shape
                     var nodeG = new THREE.ConeGeometry(1,2,6);
-                    var nodeM = new THREE.MeshPhongMaterial( { color: pColor, opacity:0.8}); //{ color: 0xffffff, wireframe: true } 
+                    var nodeM = new THREE.MeshPhongMaterial( { color: pColor, opacity:0.8}); 
                     var node2 = new THREE.Mesh( nodeG, nodeM);
                     node2.position.set(pX,pY,pZ);
                     node2.rotation.x = - Math.PI /2 ;
-                             
+
+                    //dashed line         
                     const boxG = new THREE.ConeGeometry( 4, 8, 6 );
                     const edges = new THREE.EdgesGeometry( boxG);
                     const lb = new THREE.LineSegments( edges,new THREE.LineDashedMaterial( { color: 0xffffff, dashSize: 1, gapSize: 1 } ) );
@@ -303,12 +298,12 @@ $.getJSON( "nyc.json", function( geo ) {
                     node2.add(lb);
 
                     everything.add(node2);
-                    // scene.add( node2 );
-
+             
+                    //clear the previous diamond marker if it exists
                     if (prevball != undefined){
-                        everything.remove(prevball)
-                        rotateball = true;
+                        everything.remove(prevball)                
                     } 
+                    rotateball = true;
                     prevball = node2;
 
                     return;
@@ -332,15 +327,12 @@ $.getJSON( "nyc.json", function( geo ) {
                 var nodeM = new THREE.MeshBasicMaterial( {color: new THREE.Color(pColor)}); //{ color: 0xffffff, wireframe: true } 
                 let node = new THREE.Mesh( nodeG, nodeM);
                 node.position.set(pX,pY,pZ);
-                // node.rotation.x = Math.PI / 2;
+     
                 node.name = data[key].id;
                 node.coname = data[key].coname;
                 nodes.add( node );
 
-
-                var dot = new THREE.Vector3(pX,pY,pZ);
-
-                //adding line -----------------------
+                //adding each data point's vertical line -----------------------
                 const lineM = new THREE.LineDashedMaterial({
                         color: 0xefefef,
                         opacity: 0.5,
@@ -361,7 +353,6 @@ $.getJSON( "nyc.json", function( geo ) {
                     line.computeLineDistances();
 
                     everything.add(line)
-                    // scene.add( line );
                 //end line -------------------
 
             }
